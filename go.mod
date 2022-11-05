@@ -1,4 +1,4 @@
-module github.com/almira-galeeva/Note-Service-API
+module github.com/almira-galeeva/note-service-api
 
 go 1.19
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	desc "github.com/almira-galeeva/Note-Service-API/pkg/note_v1"
+	desc "github.com/almira-galeeva/note-service-api/pkg/note_v1"
 	"google.golang.org/grpc"
 )
 

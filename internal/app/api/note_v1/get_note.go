@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	desc "github.com/almira-galeeva/Note-Service-API/pkg/note_v1"
+	desc "github.com/almira-galeeva/note-service-api/pkg/note_v1"
 )
 
 func (n *Note) GetNote(ctx context.Context, req *desc.GetNoteRequest) (*desc.GetNoteResponse, error) {
