@@ -1,4 +1,4 @@
-module github.com/almira-galeeva/testGrpc
+module github.com/almira-galeeva/Note-Service-API
 
 go 1.19
 

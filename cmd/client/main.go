@@ -3,15 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	"google.golang.org/grpc"
 	"log"
 
-	desc "github.com/almira-galeeva/testGrpc/pkg/note_v1"
+	desc "github.com/almira-galeeva/Note-Service-API/pkg/note_v1"
+	"google.golang.org/grpc"
 )
 
 const address = "localhost:50051"
 
 func main() {
+	ctx := context.Background()
+
 	con, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("didn't connect: %s", err.Error())
@@ -19,7 +21,7 @@ func main() {
 	defer con.Close()
 
 	client := desc.NewNoteV1Client(con)
-	resCreate, err := client.CreateNote(context.Background(), &desc.CreateNoteRequest{
+	resCreate, err := client.CreateNote(ctx, &desc.CreateNoteRequest{
 		Title:  "Wow",
 		Text:   "I'm surprised",
 		Author: "Almira",
@@ -28,22 +30,22 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	log.Printf("Note With Id %d Was Created", resCreate.Id)
+	log.Printf("Note With Id %d Was Created", resCreate.GetId())
 	fmt.Println()
 
-	resGet, err := client.GetNote(context.Background(), &desc.GetNoteRequest{
+	resGet, err := client.GetNote(ctx, &desc.GetNoteRequest{
 		Id: 1,
 	})
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	log.Println("Got This Note")
-	log.Println("Title:", resGet.Title)
-	log.Println("Text:", resGet.Text)
-	log.Println("Author:", resGet.Author)
+	log.Printf("Got Note With Id %d", resGet.GetId())
+	log.Println("Title:", resGet.GetTitle())
+	log.Println("Text:", resGet.GetText())
+	log.Println("Author:", resGet.GetAuthor())
 	fmt.Println()
 
-	resGetList, err := client.GetListNote(context.Background(), &desc.GetListNoteRequest{
+	resGetList, err := client.GetListNote(ctx, &desc.GetListNoteRequest{
 		Ids: []int64{1, 2},
 	})
 	if err != nil {
@@ -51,13 +53,14 @@ func main() {
 	}
 	log.Println("Got These Notes")
 	for i := 0; i < len(resGetList.GetResults()); i++ {
-		log.Println("Title:", resGetList.GetResults()[i].Title)
-		log.Println("Text:", resGetList.GetResults()[i].Text)
-		log.Println("Author:", resGetList.GetResults()[i].Author)
+		log.Println("Note Id:", resGetList.GetResults()[i].GetId())
+		log.Println("Title:", resGetList.GetResults()[i].GetTitle())
+		log.Println("Text:", resGetList.GetResults()[i].GetText())
+		log.Println("Author:", resGetList.GetResults()[i].GetAuthor())
 		fmt.Println()
 	}
 
-	resUpdate, err := client.UpdateNote(context.Background(), &desc.UpdateNoteRequest{
+	resUpdate, err := client.UpdateNote(ctx, &desc.UpdateNoteRequest{
 		Id:     1,
 		Title:  "New Title",
 		Text:   "New Text",
@@ -66,14 +69,16 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	log.Printf("Note %d Was Updated. Status Code: %d", resUpdate.Id, resUpdate.Res)
+	log.Printf("Note %d Was Updated. Status Code: %d", resUpdate.GetId(), resUpdate.GetRes())
 	fmt.Println()
 
-	resDelete, err := client.DeleteNote(context.Background(), &desc.DeleteNoteRequest{
+	_, err = client.DeleteNote(ctx, &desc.DeleteNoteRequest{
 		Id: 1,
 	})
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	log.Printf("Note %d Was Deleted. Status Code: %d", resDelete.Id, resDelete.Res)
+
+	log.Println("Note Was Successfully Deleted")
+
 }

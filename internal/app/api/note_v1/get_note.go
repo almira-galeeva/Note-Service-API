@@ -3,14 +3,15 @@ package note_v1
 import (
 	"context"
 	"fmt"
-	desc "github.com/almira-galeeva/testGrpc/pkg/note_v1"
+
+	desc "github.com/almira-galeeva/Note-Service-API/pkg/note_v1"
 )
 
 func (n *Note) GetNote(ctx context.Context, req *desc.GetNoteRequest) (*desc.GetNoteResponse, error) {
-	fmt.Println("Got Note With Id:", req.GetId())
-	fmt.Println()
+	fmt.Printf("Got Note With Id %d\n\n", req.GetId())
 
 	return &desc.GetNoteResponse{
+		Id:     req.GetId(),
 		Title:  "Beautiful Note",
 		Text:   "Hello World",
 		Author: "Almira",

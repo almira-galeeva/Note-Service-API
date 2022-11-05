@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/almira-galeeva/testGrpc/internal/app/api/note_v1"
 	"log"
 	"net"
 
-	desc "github.com/almira-galeeva/testGrpc/pkg/note_v1"
 	"google.golang.org/grpc"
+
+	"github.com/almira-galeeva/Note-Service-API/internal/app/api/note_v1"
+	desc "github.com/almira-galeeva/Note-Service-API/pkg/note_v1"
 )
 
 const port = ":50051"

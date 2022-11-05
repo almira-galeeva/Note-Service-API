@@ -4,15 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	desc "github.com/almira-galeeva/testGrpc/pkg/note_v1"
+	desc "github.com/almira-galeeva/Note-Service-API/pkg/note_v1"
 )
 
 func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*desc.DeleteNodeResponse, error) {
-	fmt.Println("Delete Note With Id:", req.GetId())
-	fmt.Println()
+	fmt.Printf("Delete Note With Id: %d\n", req.GetId())
 
-	return &desc.DeleteNodeResponse{
-		Id:  req.GetId(),
-		Res: 0,
-	}, nil
+	return &desc.DeleteNodeResponse{}, nil
 }
