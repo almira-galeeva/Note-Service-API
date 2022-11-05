@@ -7,8 +7,8 @@ import (
 	desc "github.com/almira-galeeva/note-service-api/pkg/note_v1"
 )
 
-func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*desc.DeleteNodeResponse, error) {
+func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*desc.Empty, error) {
 	fmt.Printf("Delete Note With Id: %d\n", req.GetId())
 
-	return &desc.DeleteNodeResponse{}, nil
+	return &desc.Empty{}, nil
 }

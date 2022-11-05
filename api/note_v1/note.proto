@@ -9,8 +9,10 @@ service NoteV1 {
   rpc GetNote (GetNoteRequest) returns (GetNoteResponse);
   rpc GetListNote(GetListNoteRequest) returns (GetListNoteResponse);
   rpc UpdateNote (UpdateNoteRequest) returns (UpdateNoteResponse);
-  rpc DeleteNote (DeleteNoteRequest) returns (DeleteNodeResponse);
+  rpc DeleteNote (DeleteNoteRequest) returns (Empty);
 }
+
+message Empty {}
 
 message CreateNoteRequest {
   string title = 1;
@@ -61,8 +63,4 @@ message UpdateNoteResponse {
 
 message DeleteNoteRequest {
   int64 id = 1;
-}
-
-message DeleteNodeResponse {
-  message Empty {}
 }
