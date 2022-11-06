@@ -61,7 +61,7 @@ func main() {
 	}
 
 	resUpdate, err := client.UpdateNote(ctx, &desc.UpdateNoteRequest{
-		Id:     1,
+		Id:     3,
 		Title:  "New Title",
 		Text:   "New Text",
 		Author: "Not Almira",
@@ -73,12 +73,11 @@ func main() {
 	fmt.Println()
 
 	_, err = client.DeleteNote(ctx, &desc.DeleteNoteRequest{
-		Id: 1,
+		Id: 5,
 	})
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
 	log.Println("Note Was Successfully Deleted")
-
 }
