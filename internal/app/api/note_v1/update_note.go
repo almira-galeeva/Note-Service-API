@@ -3,7 +3,9 @@ package note_v1
 import (
 	"context"
 	"fmt"
+	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	desc "github.com/almira-galeeva/note-service-api/pkg/note_v1"
 	"github.com/jmoiron/sqlx"
 )
@@ -25,9 +27,17 @@ func (n *Note) UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest) (*de
 	}
 	defer db.Close()
 
-	query := `UPDATE note SET title = $1, text = $2, author = $3 WHERE id = $4`
+	builder := sq.Update(noteTable).
+		PlaceholderFormat(sq.Dollar).
+		SetMap(sq.Eq{"title": req.GetTitle(), "text": req.GetText(), "author": req.GetAuthor(), "updated_at": time.Now()}).
+		Where(sq.Eq{"id": req.GetId()})
 
-	row, err := db.QueryContext(ctx, query, req.GetTitle(), req.GetText(), req.GetAuthor(), req.GetId())
+	query, args, err := builder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	row, err := db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}

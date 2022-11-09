@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	sq "github.com/Masterminds/squirrel"
 	desc "github.com/almira-galeeva/note-service-api/pkg/note_v1"
 	"github.com/jmoiron/sqlx"
 )
@@ -22,9 +23,16 @@ func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*de
 	}
 	defer db.Close()
 
-	query := `DELETE FROM note WHERE id = $1`
+	builder := sq.Delete(noteTable).
+		PlaceholderFormat(sq.Dollar).
+		Where("id = ?", req.GetId())
 
-	row, err := db.QueryContext(ctx, query, req.GetId())
+	query, args, err := builder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	row, err := db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}

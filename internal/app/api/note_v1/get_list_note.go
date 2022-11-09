@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	desc "github.com/almira-galeeva/note-service-api/pkg/note_v1"
 	"github.com/jmoiron/sqlx"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (n *Note) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*desc.GetListNoteResponse, error) {
@@ -31,31 +34,59 @@ func (n *Note) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*
 	}
 	defer db.Close()
 
-	query := `SELECT title, text, author FROM note WHERE id = $1`
+	builder := sq.Select("id, title, text, author, created_at, updated_at").
+		PlaceholderFormat(sq.Dollar).
+		From(noteTable).
+		Where(sq.Eq{"id": req.GetIds()})
 
-	//res := []*desc.GetListNoteResponse_Result{}
+	query, args, err := builder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	row, err := db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer row.Close()
+
 	res := make([]*desc.GetListNoteResponse_Result, 0)
+	for row.Next() {
 
-	for i := 0; i < len(req.GetIds()); i++ {
-		row, err := db.QueryContext(ctx, query, req.GetIds()[i])
+		type getNote struct {
+			id        int64
+			title     string
+			text      string
+			author    string
+			createdAt time.Time
+			updatedAt *time.Time
+		}
+
+		note := new(getNote)
+
+		row.Scan(&note.id, &note.title, &note.text, &note.author, &note.createdAt, &note.updatedAt)
+
 		if err != nil {
 			return nil, err
 		}
-		defer row.Close()
 
-		row.Next()
-		var title, text, author string
-		err = row.Scan(&title, &text, &author)
-		if err != nil {
-			return nil, err
+		val := new(desc.GetListNoteResponse_Result)
+
+		tsCreatedAt := timestamppb.New(note.createdAt)
+
+		tsUpdatedAt := new(timestamppb.Timestamp)
+		if note.updatedAt != nil {
+			tsUpdatedAt = timestamppb.New(*note.updatedAt)
+		}
+		val = &desc.GetListNoteResponse_Result{
+			Id:        note.id,
+			Title:     note.title,
+			Text:      note.text,
+			Author:    note.author,
+			CreatedAt: tsCreatedAt,
+			UpdatedAt: tsUpdatedAt,
 		}
 
-		val := &desc.GetListNoteResponse_Result{
-			Id:     req.GetIds()[i],
-			Title:  title,
-			Text:   text,
-			Author: author,
-		}
 		res = append(res, val)
 	}
 
