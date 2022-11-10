@@ -7,6 +7,7 @@ import (
 
 	desc "github.com/almira-galeeva/note-service-api/pkg/note_v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 const address = "localhost:50051"
@@ -14,7 +15,7 @@ const address = "localhost:50051"
 func main() {
 	ctx := context.Background()
 
-	con, err := grpc.Dial(address, grpc.WithInsecure())
+	con, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("didn't connect: %s", err.Error())
 	}

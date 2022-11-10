@@ -50,7 +50,7 @@ func (n *Note) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*
 	}
 	defer row.Close()
 
-	res := make([]*desc.GetListNoteResponse_Result, 0)
+	var res []*desc.GetListNoteResponse_Result
 	for row.Next() {
 
 		type getNote struct {
@@ -64,13 +64,11 @@ func (n *Note) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*
 
 		note := new(getNote)
 
-		row.Scan(&note.id, &note.title, &note.text, &note.author, &note.createdAt, &note.updatedAt)
+		err = row.Scan(&note.id, &note.title, &note.text, &note.author, &note.createdAt, &note.updatedAt)
 
 		if err != nil {
 			return nil, err
 		}
-
-		val := new(desc.GetListNoteResponse_Result)
 
 		tsCreatedAt := timestamppb.New(note.createdAt)
 
@@ -78,7 +76,7 @@ func (n *Note) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*
 		if note.updatedAt != nil {
 			tsUpdatedAt = timestamppb.New(*note.updatedAt)
 		}
-		val = &desc.GetListNoteResponse_Result{
+		val := &desc.GetListNoteResponse_Result{
 			Id:        note.id,
 			Title:     note.title,
 			Text:      note.text,

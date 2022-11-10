@@ -25,7 +25,7 @@ func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*de
 
 	builder := sq.Delete(noteTable).
 		PlaceholderFormat(sq.Dollar).
-		Where("id = ?", req.GetId())
+		Where(sq.Eq{"id": req.GetId()})
 
 	query, args, err := builder.ToSql()
 	if err != nil {
