@@ -44,17 +44,10 @@ func main() {
 	log.Println("Title:", resGet.GetTitle())
 	log.Println("Text:", resGet.GetText())
 	log.Println("Author:", resGet.GetAuthor())
-	log.Println("Created At:", resGet.GetCreatedAt().AsTime())
-	if resGet.GetUpdatedAt().GetSeconds() == 0 &&
-		resGet.GetUpdatedAt().GetNanos() == 0 {
-		log.Println("Updated At:", nil)
-	} else {
-		log.Println("Updated At:", resGet.GetUpdatedAt().AsTime())
-	}
 	fmt.Println()
 
 	resGetList, err := client.GetListNote(ctx, &desc.GetListNoteRequest{
-		Ids: []int64{2, 3},
+		Ids: []int64{1, 2},
 	})
 	if err != nil {
 		fmt.Println(err.Error())
@@ -65,18 +58,11 @@ func main() {
 		log.Println("Title:", resGetList.GetResults()[i].GetTitle())
 		log.Println("Text:", resGetList.GetResults()[i].GetText())
 		log.Println("Author:", resGetList.GetResults()[i].GetAuthor())
-		log.Println("Created At:", resGetList.GetResults()[i].GetCreatedAt().AsTime())
-		if resGetList.GetResults()[i].GetUpdatedAt().GetSeconds() == 0 &&
-			resGetList.GetResults()[i].GetUpdatedAt().GetNanos() == 0 {
-			log.Println("Updated At:", nil)
-		} else {
-			log.Println("Updated At:", resGetList.GetResults()[i].GetUpdatedAt().AsTime())
-		}
 		fmt.Println()
 	}
 
 	resUpdate, err := client.UpdateNote(ctx, &desc.UpdateNoteRequest{
-		Id:     3,
+		Id:     1,
 		Title:  "New Title",
 		Text:   "New Text",
 		Author: "Not Almira",
@@ -88,11 +74,13 @@ func main() {
 	fmt.Println()
 
 	_, err = client.DeleteNote(ctx, &desc.DeleteNoteRequest{
-		Id: 5,
+		Id: 1,
 	})
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
 	log.Println("Note Was Successfully Deleted")
+
 }
+
