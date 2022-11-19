@@ -43,8 +43,8 @@
         ]
       }
     },
-    "/note/v1/delete": {
-      "post": {
+    "/note/v1/delete/{id}": {
+      "delete": {
         "operationId": "NoteV1_DeleteNote",
         "responses": {
           "200": {
@@ -62,12 +62,11 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
+            "name": "id",
+            "in": "path",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/note_v1DeleteNoteRequest"
-            }
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -75,8 +74,8 @@
         ]
       }
     },
-    "/note/v1/get": {
-      "post": {
+    "/note/v1/get/{id}": {
+      "get": {
         "operationId": "NoteV1_GetNote",
         "responses": {
           "200": {
@@ -94,12 +93,11 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
+            "name": "id",
+            "in": "path",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/note_v1GetNoteRequest"
-            }
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -107,8 +105,8 @@
         ]
       }
     },
-    "/note/v1/get_list": {
-      "post": {
+    "/note/v1/get_list/{ids}": {
+      "get": {
         "operationId": "NoteV1_GetListNote",
         "responses": {
           "200": {
@@ -126,12 +124,16 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
+            "name": "ids",
+            "in": "path",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/note_v1GetListNoteRequest"
-            }
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "int64"
+            },
+            "collectionFormat": "csv",
+            "minItems": 1
           }
         ],
         "tags": [
@@ -140,7 +142,7 @@
       }
     },
     "/note/v1/update": {
-      "post": {
+      "put": {
         "operationId": "NoteV1_UpdateNote",
         "responses": {
           "200": {
@@ -173,49 +175,11 @@
     }
   },
   "definitions": {
-    "GetListNoteResponseResult": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
-        },
-        "title": {
-          "type": "string"
-        },
-        "text": {
-          "type": "string"
-        },
-        "author": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
     "note_v1CreateNoteRequest": {
       "type": "object",
       "properties": {
-        "title": {
-          "type": "string"
-        },
-        "text": {
-          "type": "string"
-        },
-        "author": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
+        "noteBody": {
+          "$ref": "#/definitions/note_v1NoteBody"
         }
       }
     },
@@ -228,29 +192,8 @@
         }
       }
     },
-    "note_v1DeleteNoteRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
     "note_v1Empty": {
       "type": "object"
-    },
-    "note_v1GetListNoteRequest": {
-      "type": "object",
-      "properties": {
-        "ids": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "int64"
-          }
-        }
-      }
     },
     "note_v1GetListNoteResponse": {
       "type": "object",
@@ -258,27 +201,22 @@
         "results": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/GetListNoteResponseResult"
+            "$ref": "#/definitions/note_v1WholeNote"
           }
-        }
-      }
-    },
-    "note_v1GetNoteRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
         }
       }
     },
     "note_v1GetNoteResponse": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
-        },
+        "wholeNote": {
+          "$ref": "#/definitions/note_v1WholeNote"
+        }
+      }
+    },
+    "note_v1NoteBody": {
+      "type": "object",
+      "properties": {
         "title": {
           "type": "string"
         },
@@ -290,14 +228,6 @@
         },
         "email": {
           "type": "string"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -308,17 +238,8 @@
           "type": "string",
           "format": "int64"
         },
-        "title": {
-          "type": "string"
-        },
-        "text": {
-          "type": "string"
-        },
-        "author": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
+        "noteBody": {
+          "$ref": "#/definitions/note_v1NoteBody"
         }
       }
     },
@@ -328,6 +249,26 @@
         "id": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "note_v1WholeNote": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "noteBody": {
+          "$ref": "#/definitions/note_v1NoteBody"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

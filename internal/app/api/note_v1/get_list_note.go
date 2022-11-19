@@ -7,7 +7,7 @@ import (
 )
 
 func (n *Note) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*desc.GetListNoteResponse, error) {
-	res, err := n.noteService.GetListNote(ctx, req)
+	res, err := n.noteService.GetListNote(ctx, req.GetIds())
 	if err != nil {
 		return nil, err
 	}

@@ -23,10 +23,10 @@ type GetNote struct {
 
 type NoteRepository interface {
 	CreateNote(ctx context.Context, req *desc.CreateNoteRequest) (int64, error)
-	GetNote(ctx context.Context, req *desc.GetNoteRequest) (*GetNote, error)
-	GetListNote(ctx context.Context, req *desc.GetListNoteRequest) ([]*GetNote, error)
+	GetNote(ctx context.Context, id int64) (*GetNote, error)
+	GetListNote(ctx context.Context, ids []int64) ([]*GetNote, error)
 	UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest) (int64, error)
-	DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) error
+	DeleteNote(ctx context.Context, id int64) error
 }
 
 type repository struct {
@@ -43,7 +43,7 @@ func (r *repository) CreateNote(ctx context.Context, req *desc.CreateNoteRequest
 	builder := sq.Insert(table.Note).
 		PlaceholderFormat(sq.Dollar).
 		Columns("title, text, author, email").
-		Values(req.GetTitle(), req.GetText(), req.GetAuthor(), req.GetEmail()).
+		Values(req.GetNoteBody().GetTitle(), req.GetNoteBody().GetText(), req.GetNoteBody().GetAuthor(), req.GetNoteBody().GetEmail()).
 		Suffix("returning id")
 
 	query, args, err := builder.ToSql()
@@ -67,11 +67,11 @@ func (r *repository) CreateNote(ctx context.Context, req *desc.CreateNoteRequest
 	return id, nil
 }
 
-func (r *repository) GetNote(ctx context.Context, req *desc.GetNoteRequest) (*GetNote, error) {
+func (r *repository) GetNote(ctx context.Context, id int64) (*GetNote, error) {
 	builder := sq.Select("id, title, text, author, email, created_at, updated_at").
 		PlaceholderFormat(sq.Dollar).
 		From(table.Note).
-		Where(sq.Eq{"id": req.GetId()}).
+		Where(sq.Eq{"id": id}).
 		Limit(1)
 
 	query, args, err := builder.ToSql()
@@ -92,16 +92,15 @@ func (r *repository) GetNote(ctx context.Context, req *desc.GetNoteRequest) (*Ge
 	note := new(getNote)
 
 	err = r.db.QueryRow(query, args...).Scan(&note.id, &note.title, &note.text, &note.author, &note.email, &note.createdAt, &note.updatedAt)
+	if err != nil {
+		return nil, err
+	}
 
 	tsCreatedAt := timestamppb.New(note.createdAt)
 
 	tsUpdatedAt := new(timestamppb.Timestamp)
 	if note.updatedAt != nil {
 		tsUpdatedAt = timestamppb.New(*note.updatedAt)
-	}
-
-	if err != nil {
-		return nil, err
 	}
 
 	return &GetNote{
@@ -115,11 +114,11 @@ func (r *repository) GetNote(ctx context.Context, req *desc.GetNoteRequest) (*Ge
 	}, nil
 }
 
-func (r *repository) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) ([]*GetNote, error) {
+func (r *repository) GetListNote(ctx context.Context, ids []int64) ([]*GetNote, error) {
 	builder := sq.Select("id, title, text, author, email, created_at, updated_at").
 		PlaceholderFormat(sq.Dollar).
 		From(table.Note).
-		Where(sq.Eq{"id": req.GetIds()})
+		Where(sq.Eq{"id": ids})
 
 	query, args, err := builder.ToSql()
 	if err != nil {
@@ -134,7 +133,6 @@ func (r *repository) GetListNote(ctx context.Context, req *desc.GetListNoteReque
 
 	var res []*GetNote
 	for row.Next() {
-
 		type getNote struct {
 			id        int64
 			title     string
@@ -148,7 +146,6 @@ func (r *repository) GetListNote(ctx context.Context, req *desc.GetListNoteReque
 		note := new(getNote)
 
 		err = row.Scan(&note.id, &note.title, &note.text, &note.author, &note.email, &note.createdAt, &note.updatedAt)
-
 		if err != nil {
 			return nil, err
 		}
@@ -178,7 +175,7 @@ func (r *repository) GetListNote(ctx context.Context, req *desc.GetListNoteReque
 func (r *repository) UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest) (int64, error) {
 	builder := sq.Update(table.Note).
 		PlaceholderFormat(sq.Dollar).
-		SetMap(sq.Eq{"title": req.GetTitle(), "text": req.GetText(), "author": req.GetAuthor(), "updated_at": time.Now()}).
+		SetMap(sq.Eq{"title": req.GetNoteBody().GetTitle(), "text": req.GetNoteBody().GetText(), "author": req.GetNoteBody().GetAuthor(), "email": req.GetNoteBody().GetEmail(), "updated_at": time.Now()}).
 		Where(sq.Eq{"id": req.GetId()})
 
 	query, args, err := builder.ToSql()
@@ -195,10 +192,10 @@ func (r *repository) UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest
 	return req.GetId(), nil
 }
 
-func (r *repository) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) error {
+func (r *repository) DeleteNote(ctx context.Context, id int64) error {
 	builder := sq.Delete(table.Note).
 		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{"id": req.GetId()})
+		Where(sq.Eq{"id": id})
 
 	query, args, err := builder.ToSql()
 	if err != nil {

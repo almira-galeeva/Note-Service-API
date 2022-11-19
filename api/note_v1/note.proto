@@ -15,39 +15,51 @@ service NoteV1 {
       body: "*"
     };
   }
+
   rpc GetNote (GetNoteRequest) returns (GetNoteResponse) {
     option (google.api.http) = {
-      post: "/note/v1/get"
-      body: "*"
+      get: "/note/v1/get/{id}"
     };
   }
+
   rpc GetListNote(GetListNoteRequest) returns (GetListNoteResponse) {
     option (google.api.http) = {
-      post: "/note/v1/get_list"
-      body: "*"
+      get: "/note/v1/get_list/{ids}"
     };
   }
+
   rpc UpdateNote (UpdateNoteRequest) returns (UpdateNoteResponse) {
     option (google.api.http) = {
-      post: "/note/v1/update"
+      put: "/note/v1/update"
       body: "*"
     };
   }
+
   rpc DeleteNote (DeleteNoteRequest) returns (Empty) {
     option (google.api.http) = {
-      post: "/note/v1/delete"
-      body: "*"
+      delete: "/note/v1/delete/{id}"
     };
   }
 }
 
 message Empty {}
 
-message CreateNoteRequest {
-  string title = 1;
-  string text = 2;
-  string author = 3;
+message NoteBody {
+  string title = 1 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string text = 2 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  string author = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
   string email = 4 [(validate.rules).string.email = true];
+}
+
+message WholeNote {
+  int64 id = 1 [(validate.rules).int64.gt = 0];
+  NoteBody noteBody = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message CreateNoteRequest {
+  NoteBody noteBody = 1;
 }
 
 message CreateNoteResponse {
@@ -59,13 +71,7 @@ message GetNoteRequest {
 }
 
 message GetNoteResponse {
-  int64 id = 1;
-  string title = 2;
-  string text = 3;
-  string author = 4;
-  string email = 7;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
+  WholeNote wholeNote = 1;
 }
 
 message GetListNoteRequest {
@@ -73,24 +79,12 @@ message GetListNoteRequest {
 }
 
 message GetListNoteResponse {
-  message Result {
-    int64 id = 1;
-    string title = 2;
-    string text = 3;
-    string author = 4;
-    string email = 7;
-    google.protobuf.Timestamp created_at = 5;
-    google.protobuf.Timestamp updated_at = 6;
-  }
-  repeated Result results = 1;
+  repeated WholeNote results = 1;
 }
 
 message UpdateNoteRequest {
   int64 id = 1 [(validate.rules).int64.gt = 0];
-  string title = 2;
-  string text = 3;
-  string author = 4;
-  string email = 5 [(validate.rules).string.email = true];
+  NoteBody noteBody = 2;
 }
 
 message UpdateNoteResponse {
