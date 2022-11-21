@@ -84,7 +84,7 @@ func startGRPC() error {
 
 	fmt.Println("GRPC Server is running on host:", hostGrpc)
 	if err = s.Serve(list); err != nil {
-		log.Fatalf("failed to serve: %s", err.Error())
+		return err
 	}
 
 	return nil
@@ -97,12 +97,12 @@ func startHttp() error {
 
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	fmt.Println("HTTP Server is running on host:", hostHttp)
 
 	err := desc.RegisterNoteV1HandlerFromEndpoint(ctx, mux, hostGrpc, opts)
 	if err != nil {
 		return err
 	}
+	fmt.Println("HTTP Server is running on host:", hostHttp)
 
 	return http.ListenAndServe(hostHttp, mux)
 }
