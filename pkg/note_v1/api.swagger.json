@@ -231,6 +231,23 @@
         }
       }
     },
+    "note_v1UpdateNoteInfo": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
     "note_v1UpdateNoteRequest": {
       "type": "object",
       "properties": {
@@ -239,7 +256,7 @@
           "format": "int64"
         },
         "noteBody": {
-          "$ref": "#/definitions/note_v1NoteBody"
+          "$ref": "#/definitions/note_v1UpdateNoteInfo"
         }
       }
     },

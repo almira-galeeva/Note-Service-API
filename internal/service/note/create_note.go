@@ -3,16 +3,14 @@ package note
 import (
 	"context"
 
-	desc "github.com/almira-galeeva/note-service-api/pkg/note_v1"
+	"github.com/almira-galeeva/note-service-api/internal/model"
 )
 
-func (s *Service) CreateNote(ctx context.Context, req *desc.CreateNoteRequest) (*desc.CreateNoteResponse, error) {
-	id, err := s.noteRepository.CreateNote(ctx, req)
+func (s *Service) CreateNote(ctx context.Context, noteBody *model.NoteBody) (int64, error) {
+	id, err := s.noteRepository.CreateNote(ctx, noteBody)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
-	return &desc.CreateNoteResponse{
-		Id: id,
-	}, nil
+	return id, nil
 }
