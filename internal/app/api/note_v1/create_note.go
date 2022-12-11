@@ -8,7 +8,7 @@ import (
 )
 
 func (n *Note) CreateNote(ctx context.Context, req *desc.CreateNoteRequest) (*desc.CreateNoteResponse, error) {
-	id, err := n.noteService.CreateNote(ctx, converter.ToNoteBody(req.GetNoteBody()))
+	id, err := n.noteService.CreateNote(ctx, converter.ToNote(req.GetNoteBody()))
 	if err != nil {
 		return nil, err
 	}

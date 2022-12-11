@@ -50,7 +50,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/note_v1Empty"
+              "$ref": "#/definitions/apinote_v1Empty"
             }
           },
           "default": {
@@ -175,10 +175,18 @@
     }
   },
   "definitions": {
+    "apinote_v1Empty": {
+      "type": "object",
+      "properties": {
+        "empty": {
+          "properties": {}
+        }
+      }
+    },
     "note_v1CreateNoteRequest": {
       "type": "object",
       "properties": {
-        "noteBody": {
+        "note_body": {
           "$ref": "#/definitions/note_v1NoteBody"
         }
       }
@@ -192,16 +200,13 @@
         }
       }
     },
-    "note_v1Empty": {
-      "type": "object"
-    },
     "note_v1GetListNoteResponse": {
       "type": "object",
       "properties": {
         "results": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/note_v1WholeNote"
+            "$ref": "#/definitions/note_v1Note"
           }
         }
       }
@@ -209,8 +214,28 @@
     "note_v1GetNoteResponse": {
       "type": "object",
       "properties": {
-        "wholeNote": {
-          "$ref": "#/definitions/note_v1WholeNote"
+        "whole_note": {
+          "$ref": "#/definitions/note_v1Note"
+        }
+      }
+    },
+    "note_v1Note": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "note_body": {
+          "$ref": "#/definitions/note_v1NoteBody"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -255,7 +280,7 @@
           "type": "string",
           "format": "int64"
         },
-        "noteBody": {
+        "note_body": {
           "$ref": "#/definitions/note_v1UpdateNoteInfo"
         }
       }
@@ -266,26 +291,6 @@
         "id": {
           "type": "string",
           "format": "int64"
-        }
-      }
-    },
-    "note_v1WholeNote": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
-        },
-        "noteBody": {
-          "$ref": "#/definitions/note_v1NoteBody"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },

@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ToNoteBody(noteBody *desc.NoteBody) *model.NoteBody {
+func ToNote(noteBody *desc.NoteBody) *model.NoteBody {
 	return &model.NoteBody{
 		Title:  noteBody.GetTitle(),
 		Text:   noteBody.GetText(),
@@ -18,16 +18,38 @@ func ToNoteBody(noteBody *desc.NoteBody) *model.NoteBody {
 }
 
 func ToUpdateNoteInfo(noteInfo *desc.UpdateNoteRequest) *model.UpdateNoteInfo {
+	var validTitle, validText, validAuthor, validEmail bool
+
+	if noteInfo.GetNoteBody().GetTitle() != nil {
+		validTitle = true
+	}
+
+	if noteInfo.GetNoteBody().GetText() != nil {
+		validText = true
+	}
+
+	if noteInfo.GetNoteBody().GetAuthor() != nil {
+		validAuthor = true
+	}
+
+	if noteInfo.GetNoteBody().GetEmail() != nil {
+		validEmail = true
+	}
+
 	return &model.UpdateNoteInfo{
-		Id:     noteInfo.Id,
-		Title:  sql.NullString{String: noteInfo.GetNoteBody().GetTitle().GetValue(), Valid: true},
-		Text:   sql.NullString{String: noteInfo.GetNoteBody().GetText().GetValue(), Valid: true},
-		Author: sql.NullString{String: noteInfo.GetNoteBody().GetAuthor().GetValue(), Valid: true},
-		Email:  sql.NullString{String: noteInfo.GetNoteBody().GetEmail().GetValue(), Valid: true},
+		Id:     noteInfo.GetId(),
+		Title:  sql.NullString{String: noteInfo.GetNoteBody().GetTitle().GetValue(), Valid: validTitle},
+		Text:   sql.NullString{String: noteInfo.GetNoteBody().GetText().GetValue(), Valid: validText},
+		Author: sql.NullString{String: noteInfo.GetNoteBody().GetAuthor().GetValue(), Valid: validAuthor},
+		Email:  sql.NullString{String: noteInfo.GetNoteBody().GetEmail().GetValue(), Valid: validEmail},
 	}
 }
 
-func ToDescNoteBody(noteBody *model.NoteBody) *desc.NoteBody {
+func ToDescNote(noteBody *model.NoteBody) *desc.NoteBody {
+	if noteBody == nil {
+		return nil
+	}
+
 	return &desc.NoteBody{
 		Title:  noteBody.Title,
 		Text:   noteBody.Text,
@@ -36,25 +58,29 @@ func ToDescNoteBody(noteBody *model.NoteBody) *desc.NoteBody {
 	}
 }
 
-func ToDescWholeNote(noteBody *model.WholeNote) *desc.WholeNote {
+func ToDescWholeNote(noteBody *model.Note) *desc.Note {
+	if noteBody == nil {
+		return nil
+	}
+
 	var updatedAt *timestamppb.Timestamp
 	if noteBody.UpdatedAt.Valid {
 		updatedAt = timestamppb.New(noteBody.UpdatedAt.Time)
 	}
 
-	return &desc.WholeNote{
+	return &desc.Note{
 		Id:        noteBody.Id,
-		NoteBody:  ToDescNoteBody(noteBody.NoteBody),
+		NoteBody:  ToDescNote(noteBody.NoteBody),
 		CreatedAt: timestamppb.New(noteBody.CreatedAt),
 		UpdatedAt: updatedAt,
 	}
 }
 
-func ToDescListWholeNote(noteBodies *[]model.WholeNote) []*desc.WholeNote {
-	var notes []*desc.WholeNote
+func ToDescListWholeNote(noteBodies []*model.Note) []*desc.Note {
+	notes := make([]*desc.Note, len(noteBodies))
 
-	for _, note := range *noteBodies {
-		notes = append(notes, ToDescWholeNote(&note))
+	for ind, note := range noteBodies {
+		notes[ind] = ToDescWholeNote(note)
 	}
 	return notes
 }

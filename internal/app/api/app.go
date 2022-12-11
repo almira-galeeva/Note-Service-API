@@ -30,8 +30,11 @@ func NewApp(ctx context.Context, pathConfig string) (*App, error) {
 		pathConfig: pathConfig,
 	}
 	err := a.initDeps(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	return a, err
+	return a, nil
 }
 
 // Run ...

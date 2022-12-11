@@ -6,6 +6,7 @@ import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "github.com/almira-galeeva/note-service-api/pkg/note_v1";
 
@@ -43,7 +44,9 @@ service NoteV1 {
   }
 }
 
-message Empty {}
+message Empty {
+  google.protobuf.Empty empty = 1;
+}
 
 message NoteBody {
   string title = 1 [(validate.rules).string = {min_len: 1, max_len: 50}];
@@ -59,15 +62,15 @@ message UpdateNoteInfo {
   google.protobuf.StringValue email = 4;
 }
 
-message WholeNote {
+message Note {
   int64 id = 1 [(validate.rules).int64.gt = 0];
-  NoteBody noteBody = 2;
+  NoteBody note_body = 2;
   google.protobuf.Timestamp created_at = 3;
   google.protobuf.Timestamp updated_at = 4;
 }
 
 message CreateNoteRequest {
-  NoteBody noteBody = 1;
+  NoteBody note_body = 1;
 }
 
 message CreateNoteResponse {
@@ -79,7 +82,7 @@ message GetNoteRequest {
 }
 
 message GetNoteResponse {
-  WholeNote wholeNote = 1;
+  Note whole_note = 1;
 }
 
 message GetListNoteRequest {
@@ -87,12 +90,12 @@ message GetListNoteRequest {
 }
 
 message GetListNoteResponse {
-  repeated WholeNote results = 1;
+  repeated Note results = 1;
 }
 
 message UpdateNoteRequest {
   int64 id = 1 [(validate.rules).int64.gt = 0];
-  UpdateNoteInfo  noteBody = 2;
+  UpdateNoteInfo note_body = 2;
 }
 
 message UpdateNoteResponse {

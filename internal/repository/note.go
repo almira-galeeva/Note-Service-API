@@ -12,8 +12,8 @@ import (
 
 type NoteRepository interface {
 	CreateNote(ctx context.Context, noteBody *model.NoteBody) (int64, error)
-	GetNote(ctx context.Context, id int64) (*model.WholeNote, error)
-	GetListNote(ctx context.Context, ids []int64) (*[]model.WholeNote, error)
+	GetNote(ctx context.Context, id int64) (*model.Note, error)
+	GetListNote(ctx context.Context, ids []int64) ([]*model.Note, error)
 	UpdateNote(ctx context.Context, UpdateNote *model.UpdateNoteInfo) (int64, error)
 	DeleteNote(ctx context.Context, id int64) error
 }
@@ -61,7 +61,7 @@ func (r *repository) CreateNote(ctx context.Context, noteBody *model.NoteBody) (
 	return id, nil
 }
 
-func (r *repository) GetNote(ctx context.Context, id int64) (*model.WholeNote, error) {
+func (r *repository) GetNote(ctx context.Context, id int64) (*model.Note, error) {
 	builder := sq.Select("id, title, text, author, email, created_at, updated_at").
 		PlaceholderFormat(sq.Dollar).
 		From(table.Note).
@@ -78,7 +78,7 @@ func (r *repository) GetNote(ctx context.Context, id int64) (*model.WholeNote, e
 		QueryRaw: query,
 	}
 
-	var note model.WholeNote
+	var note model.Note
 	err = r.client.DB().GetContext(ctx, &note, q, args...)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (r *repository) GetNote(ctx context.Context, id int64) (*model.WholeNote, e
 	return &note, nil
 }
 
-func (r *repository) GetListNote(ctx context.Context, ids []int64) (*[]model.WholeNote, error) {
+func (r *repository) GetListNote(ctx context.Context, ids []int64) ([]*model.Note, error) {
 	builder := sq.Select("id, title, text, author, email, created_at, updated_at").
 		PlaceholderFormat(sq.Dollar).
 		From(table.Note).
@@ -103,13 +103,13 @@ func (r *repository) GetListNote(ctx context.Context, ids []int64) (*[]model.Who
 		QueryRaw: query,
 	}
 
-	var notes []model.WholeNote
+	var notes []*model.Note
 	err = r.client.DB().SelectContext(ctx, &notes, q, args...)
 	if err != nil {
 		return nil, err
 	}
 
-	return &notes, nil
+	return notes, nil
 }
 
 func (r *repository) UpdateNote(ctx context.Context, UpdateNote *model.UpdateNoteInfo) (int64, error) {

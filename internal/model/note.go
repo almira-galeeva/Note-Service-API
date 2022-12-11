@@ -20,7 +20,7 @@ type UpdateNoteInfo struct {
 	Email  sql.NullString `db:"email"`
 }
 
-type WholeNote struct {
+type Note struct {
 	Id        int64        `db:"id"`
 	NoteBody  *NoteBody    `db:""`
 	CreatedAt time.Time    `db:"created_at"`

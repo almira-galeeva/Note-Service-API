@@ -53,7 +53,6 @@ func (s *serviceProvider) GetConfig() *config.Config {
 		if err != nil {
 			log.Fatalf("failed to get config: %s", err.Error())
 		}
-
 		s.config = cfg
 	}
 
