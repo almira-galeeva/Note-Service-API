@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -26,7 +27,7 @@ type NoteV1Client interface {
 	GetNote(ctx context.Context, in *GetNoteRequest, opts ...grpc.CallOption) (*GetNoteResponse, error)
 	GetListNote(ctx context.Context, in *GetListNoteRequest, opts ...grpc.CallOption) (*GetListNoteResponse, error)
 	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
-	DeleteNote(ctx context.Context, in *DeleteNoteRequest, opts ...grpc.CallOption) (*Empty, error)
+	DeleteNote(ctx context.Context, in *DeleteNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type noteV1Client struct {
@@ -73,8 +74,8 @@ func (c *noteV1Client) UpdateNote(ctx context.Context, in *UpdateNoteRequest, op
 	return out, nil
 }
 
-func (c *noteV1Client) DeleteNote(ctx context.Context, in *DeleteNoteRequest, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *noteV1Client) DeleteNote(ctx context.Context, in *DeleteNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/api.note_v1.NoteV1/DeleteNote", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -90,7 +91,7 @@ type NoteV1Server interface {
 	GetNote(context.Context, *GetNoteRequest) (*GetNoteResponse, error)
 	GetListNote(context.Context, *GetListNoteRequest) (*GetListNoteResponse, error)
 	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
-	DeleteNote(context.Context, *DeleteNoteRequest) (*Empty, error)
+	DeleteNote(context.Context, *DeleteNoteRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedNoteV1Server()
 }
 
@@ -110,7 +111,7 @@ func (UnimplementedNoteV1Server) GetListNote(context.Context, *GetListNoteReques
 func (UnimplementedNoteV1Server) UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateNote not implemented")
 }
-func (UnimplementedNoteV1Server) DeleteNote(context.Context, *DeleteNoteRequest) (*Empty, error) {
+func (UnimplementedNoteV1Server) DeleteNote(context.Context, *DeleteNoteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteNote not implemented")
 }
 func (UnimplementedNoteV1Server) mustEmbedUnimplementedNoteV1Server() {}

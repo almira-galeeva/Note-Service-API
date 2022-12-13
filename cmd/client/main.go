@@ -8,6 +8,7 @@ import (
 	desc "github.com/almira-galeeva/note-service-api/pkg/note_v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const address = "localhost:50051"
@@ -82,11 +83,11 @@ func main() {
 
 	resUpdate, err := client.UpdateNote(ctx, &desc.UpdateNoteRequest{
 		Id: 3,
-		NoteBody: &desc.NoteBody{
-			Title:  "New Title",
-			Text:   "New Text",
-			Author: "Not Almira",
-			Email:  "example@mail.com",
+		NoteBody: &desc.UpdateNoteInfo{
+			Title:  wrapperspb.String("New Title"),
+			Text:   wrapperspb.String("New Text"),
+			Author: wrapperspb.String("Not Almira"),
+			Email:  wrapperspb.String("example@mail.com"),
 		},
 	})
 	if err != nil {

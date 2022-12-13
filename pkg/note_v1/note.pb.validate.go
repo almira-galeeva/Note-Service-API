@@ -35,104 +35,6 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on Empty with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Empty) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on Empty with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in EmptyMultiError, or nil if none found.
-func (m *Empty) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *Empty) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return EmptyMultiError(errors)
-	}
-
-	return nil
-}
-
-// EmptyMultiError is an error wrapping multiple validation errors returned by
-// Empty.ValidateAll() if the designated constraints aren't met.
-type EmptyMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m EmptyMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m EmptyMultiError) AllErrors() []error { return m }
-
-// EmptyValidationError is the validation error returned by Empty.Validate if
-// the designated constraints aren't met.
-type EmptyValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e EmptyValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e EmptyValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e EmptyValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e EmptyValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e EmptyValidationError) ErrorName() string { return "EmptyValidationError" }
-
-// Error satisfies the builtin error interface
-func (e EmptyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sEmpty.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = EmptyValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = EmptyValidationError{}
-
 // Validate checks the field values on NoteBody with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -327,22 +229,237 @@ var _ interface {
 	ErrorName() string
 } = NoteBodyValidationError{}
 
-// Validate checks the field values on WholeNote with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on UpdateNoteInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *WholeNote) Validate() error {
+func (m *UpdateNoteInfo) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on WholeNote with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in WholeNoteMultiError, or nil
-// if none found.
-func (m *WholeNote) ValidateAll() error {
+// ValidateAll checks the field values on UpdateNoteInfo with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UpdateNoteInfoMultiError,
+// or nil if none found.
+func (m *UpdateNoteInfo) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *WholeNote) validate(all bool) error {
+func (m *UpdateNoteInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetTitle()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateNoteInfoValidationError{
+					field:  "Title",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateNoteInfoValidationError{
+					field:  "Title",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTitle()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateNoteInfoValidationError{
+				field:  "Title",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetText()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateNoteInfoValidationError{
+					field:  "Text",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateNoteInfoValidationError{
+					field:  "Text",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetText()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateNoteInfoValidationError{
+				field:  "Text",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetAuthor()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateNoteInfoValidationError{
+					field:  "Author",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateNoteInfoValidationError{
+					field:  "Author",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAuthor()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateNoteInfoValidationError{
+				field:  "Author",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetEmail()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateNoteInfoValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateNoteInfoValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateNoteInfoValidationError{
+				field:  "Email",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateNoteInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateNoteInfoMultiError is an error wrapping multiple validation errors
+// returned by UpdateNoteInfo.ValidateAll() if the designated constraints
+// aren't met.
+type UpdateNoteInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateNoteInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateNoteInfoMultiError) AllErrors() []error { return m }
+
+// UpdateNoteInfoValidationError is the validation error returned by
+// UpdateNoteInfo.Validate if the designated constraints aren't met.
+type UpdateNoteInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateNoteInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateNoteInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateNoteInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateNoteInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateNoteInfoValidationError) ErrorName() string { return "UpdateNoteInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UpdateNoteInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateNoteInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateNoteInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateNoteInfoValidationError{}
+
+// Validate checks the field values on Note with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Note) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Note with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in NoteMultiError, or nil if none found.
+func (m *Note) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Note) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -350,7 +467,7 @@ func (m *WholeNote) validate(all bool) error {
 	var errors []error
 
 	if m.GetId() <= 0 {
-		err := WholeNoteValidationError{
+		err := NoteValidationError{
 			field:  "Id",
 			reason: "value must be greater than 0",
 		}
@@ -364,7 +481,7 @@ func (m *WholeNote) validate(all bool) error {
 		switch v := interface{}(m.GetNoteBody()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, WholeNoteValidationError{
+				errors = append(errors, NoteValidationError{
 					field:  "NoteBody",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -372,7 +489,7 @@ func (m *WholeNote) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, WholeNoteValidationError{
+				errors = append(errors, NoteValidationError{
 					field:  "NoteBody",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -381,7 +498,7 @@ func (m *WholeNote) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetNoteBody()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return WholeNoteValidationError{
+			return NoteValidationError{
 				field:  "NoteBody",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -393,7 +510,7 @@ func (m *WholeNote) validate(all bool) error {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, WholeNoteValidationError{
+				errors = append(errors, NoteValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -401,7 +518,7 @@ func (m *WholeNote) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, WholeNoteValidationError{
+				errors = append(errors, NoteValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -410,7 +527,7 @@ func (m *WholeNote) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return WholeNoteValidationError{
+			return NoteValidationError{
 				field:  "CreatedAt",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -422,7 +539,7 @@ func (m *WholeNote) validate(all bool) error {
 		switch v := interface{}(m.GetUpdatedAt()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, WholeNoteValidationError{
+				errors = append(errors, NoteValidationError{
 					field:  "UpdatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -430,7 +547,7 @@ func (m *WholeNote) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, WholeNoteValidationError{
+				errors = append(errors, NoteValidationError{
 					field:  "UpdatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -439,7 +556,7 @@ func (m *WholeNote) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return WholeNoteValidationError{
+			return NoteValidationError{
 				field:  "UpdatedAt",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -448,18 +565,18 @@ func (m *WholeNote) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return WholeNoteMultiError(errors)
+		return NoteMultiError(errors)
 	}
 
 	return nil
 }
 
-// WholeNoteMultiError is an error wrapping multiple validation errors returned
-// by WholeNote.ValidateAll() if the designated constraints aren't met.
-type WholeNoteMultiError []error
+// NoteMultiError is an error wrapping multiple validation errors returned by
+// Note.ValidateAll() if the designated constraints aren't met.
+type NoteMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m WholeNoteMultiError) Error() string {
+func (m NoteMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -468,11 +585,11 @@ func (m WholeNoteMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m WholeNoteMultiError) AllErrors() []error { return m }
+func (m NoteMultiError) AllErrors() []error { return m }
 
-// WholeNoteValidationError is the validation error returned by
-// WholeNote.Validate if the designated constraints aren't met.
-type WholeNoteValidationError struct {
+// NoteValidationError is the validation error returned by Note.Validate if the
+// designated constraints aren't met.
+type NoteValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -480,22 +597,22 @@ type WholeNoteValidationError struct {
 }
 
 // Field function returns field value.
-func (e WholeNoteValidationError) Field() string { return e.field }
+func (e NoteValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e WholeNoteValidationError) Reason() string { return e.reason }
+func (e NoteValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e WholeNoteValidationError) Cause() error { return e.cause }
+func (e NoteValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e WholeNoteValidationError) Key() bool { return e.key }
+func (e NoteValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e WholeNoteValidationError) ErrorName() string { return "WholeNoteValidationError" }
+func (e NoteValidationError) ErrorName() string { return "NoteValidationError" }
 
 // Error satisfies the builtin error interface
-func (e WholeNoteValidationError) Error() string {
+func (e NoteValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -507,14 +624,14 @@ func (e WholeNoteValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sWholeNote.%s: %s%s",
+		"invalid %sNote.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = WholeNoteValidationError{}
+var _ error = NoteValidationError{}
 
 var _ interface {
 	Field() string
@@ -522,7 +639,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = WholeNoteValidationError{}
+} = NoteValidationError{}
 
 // Validate checks the field values on CreateNoteRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
