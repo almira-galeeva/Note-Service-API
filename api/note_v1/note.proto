@@ -37,15 +37,11 @@ service NoteV1 {
     };
   }
 
-  rpc DeleteNote (DeleteNoteRequest) returns (Empty) {
+  rpc DeleteNote (DeleteNoteRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/note/v1/delete/{id}"
     };
   }
-}
-
-message Empty {
-  google.protobuf.Empty empty = 1;
 }
 
 message NoteBody {

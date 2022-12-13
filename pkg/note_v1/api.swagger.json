@@ -50,7 +50,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apinote_v1Empty"
+              "properties": {}
             }
           },
           "default": {
@@ -175,14 +175,6 @@
     }
   },
   "definitions": {
-    "apinote_v1Empty": {
-      "type": "object",
-      "properties": {
-        "empty": {
-          "properties": {}
-        }
-      }
-    },
     "note_v1CreateNoteRequest": {
       "type": "object",
       "properties": {

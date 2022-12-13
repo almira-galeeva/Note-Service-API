@@ -18,30 +18,12 @@ func ToNote(noteBody *desc.NoteBody) *model.NoteBody {
 }
 
 func ToUpdateNoteInfo(noteInfo *desc.UpdateNoteRequest) *model.UpdateNoteInfo {
-	var validTitle, validText, validAuthor, validEmail bool
-
-	if noteInfo.GetNoteBody().GetTitle() != nil {
-		validTitle = true
-	}
-
-	if noteInfo.GetNoteBody().GetText() != nil {
-		validText = true
-	}
-
-	if noteInfo.GetNoteBody().GetAuthor() != nil {
-		validAuthor = true
-	}
-
-	if noteInfo.GetNoteBody().GetEmail() != nil {
-		validEmail = true
-	}
-
 	return &model.UpdateNoteInfo{
 		Id:     noteInfo.GetId(),
-		Title:  sql.NullString{String: noteInfo.GetNoteBody().GetTitle().GetValue(), Valid: validTitle},
-		Text:   sql.NullString{String: noteInfo.GetNoteBody().GetText().GetValue(), Valid: validText},
-		Author: sql.NullString{String: noteInfo.GetNoteBody().GetAuthor().GetValue(), Valid: validAuthor},
-		Email:  sql.NullString{String: noteInfo.GetNoteBody().GetEmail().GetValue(), Valid: validEmail},
+		Title:  sql.NullString{String: noteInfo.GetNoteBody().GetTitle().GetValue(), Valid: noteInfo.GetNoteBody().GetTitle() != nil},
+		Text:   sql.NullString{String: noteInfo.GetNoteBody().GetText().GetValue(), Valid: noteInfo.GetNoteBody().GetText() != nil},
+		Author: sql.NullString{String: noteInfo.GetNoteBody().GetAuthor().GetValue(), Valid: noteInfo.GetNoteBody().GetAuthor() != nil},
+		Email:  sql.NullString{String: noteInfo.GetNoteBody().GetEmail().GetValue(), Valid: noteInfo.GetNoteBody().GetEmail() != nil},
 	}
 }
 
@@ -77,10 +59,10 @@ func ToDescWholeNote(noteBody *model.Note) *desc.Note {
 }
 
 func ToDescListWholeNote(noteBodies []*model.Note) []*desc.Note {
-	notes := make([]*desc.Note, len(noteBodies))
+	notes := make([]*desc.Note, 0, len(noteBodies))
 
-	for ind, note := range noteBodies {
-		notes[ind] = ToDescWholeNote(note)
+	for _, note := range noteBodies {
+		notes = append(notes, ToDescWholeNote(note))
 	}
 	return notes
 }
