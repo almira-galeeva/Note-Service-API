@@ -3,7 +3,6 @@ package note_v1
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 
 	noteMocks "github.com/almira-galeeva/note-service-api/internal/repository/mocks"
@@ -43,14 +42,12 @@ func TestDelete(t *testing.T) {
 	})
 
 	t.Run("success case", func(t *testing.T) {
-		fmt.Println(req)
 		res, err := api.DeleteNote(ctx, req)
 		require.Nil(t, err)
 		require.Equal(t, validRes, res)
 	})
 
 	t.Run("note repo err", func(t *testing.T) {
-		fmt.Println(req)
 		_, err := api.DeleteNote(ctx, req)
 		require.NotNil(t, err)
 		require.Equal(t, repoErrText, err.Error())

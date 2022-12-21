@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/almira-galeeva/note-service-api/internal/model"
@@ -86,14 +85,12 @@ func TestUpdate(t *testing.T) {
 	})
 
 	t.Run("success case", func(t *testing.T) {
-		fmt.Println(req)
 		res, err := api.UpdateNote(ctx, req)
 		require.Nil(t, err)
 		require.Equal(t, validRes, res)
 	})
 
 	t.Run("note repo err", func(t *testing.T) {
-		fmt.Println(req)
 		_, err := api.UpdateNote(ctx, req)
 		require.NotNil(t, err)
 		require.Equal(t, repoErrText, err.Error())

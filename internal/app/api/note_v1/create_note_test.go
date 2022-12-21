@@ -3,7 +3,6 @@ package note_v1
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/almira-galeeva/note-service-api/internal/model"
@@ -61,14 +60,12 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("success case", func(t *testing.T) {
-		fmt.Println(req.GetNoteBody())
 		res, err := api.CreateNote(ctx, req)
 		require.Nil(t, err)
 		require.Equal(t, validRes, res)
 	})
 
 	t.Run("note repo err", func(t *testing.T) {
-		fmt.Println(req.GetNoteBody())
 		_, err := api.CreateNote(ctx, req)
 		require.NotNil(t, err)
 		require.Equal(t, repoErrText, err.Error())

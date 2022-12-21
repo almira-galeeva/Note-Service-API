@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/almira-galeeva/note-service-api/internal/model"
@@ -67,7 +66,7 @@ func TestGet(t *testing.T) {
 	noteMock := noteMocks.NewMockNoteRepository(mockCtrl)
 	gomock.InOrder(
 		noteMock.EXPECT().GetNote(ctx, id).Return(repoRes, nil),
-		noteMock.EXPECT().GetNote(ctx, id).Return(&model.Note{}, repoErr),
+		noteMock.EXPECT().GetNote(ctx, id).Return(nil, repoErr),
 	)
 
 	api := newMockNoteV1(Note{
@@ -75,14 +74,12 @@ func TestGet(t *testing.T) {
 	})
 
 	t.Run("success case", func(t *testing.T) {
-		fmt.Println(req)
 		res, err := api.GetNote(ctx, req)
 		require.Nil(t, err)
 		require.Equal(t, validRes, res)
 	})
 
 	t.Run("note repo err", func(t *testing.T) {
-		fmt.Println(req)
 		_, err := api.GetNote(ctx, req)
 		require.NotNil(t, err)
 		require.Equal(t, repoErrText, err.Error())
